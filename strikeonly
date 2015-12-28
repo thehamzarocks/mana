@@ -1,0 +1,123 @@
+from random import randint
+from Tkinter import *
+
+class Hero(object):
+	def __init__(self):
+		self.hp=10
+		self.mana=10
+		self.gold=0
+		self.hpregen=1
+		self.manaregen=1 
+		self.goldregen=1 
+		self.strike=Strike()
+		
+	def gainhp(self,hpgain):
+		self.hp=self.hp + hpgain 
+	
+	def gainmana(self,managain):
+		self.mana=self.mana + managain
+	
+	def gaingold(self,goldgain):
+		self.gold=self.gold + goldgain
+		
+	def losehp(self,hploss):
+		self.hp=self.hp - hploss
+		
+	def losemana(self,manaloss):
+		self.mana=self.mana - manaloss 
+
+
+class Strike(object):
+	def __init__(self):
+		self.damage=2
+		self.manacost=1
+		self.level=1 
+		
+	def levelup(self):
+		self.level=self.level+1
+		if self.level%5==0:
+			self.damage=self.damage+1
+		self.manacost=self.manacost+0.25
+		
+
+root = Tk()
+
+radiant=Hero()
+dire=Hero()
+
+#widgets:
+
+radiant_label=Label(root,text="Radiant")
+dire_label=Label(root,text="Dire")
+
+radiant_hp_label=Label(root,text="HP:")
+radiant_mana_label=Label(root,text="Mana:")
+radiant_gold_label=Label(root,text="Gold:")
+
+dire_hp_label=Label(root,text="HP:")
+dire_mana_label=Label(root,text="Mana:")
+dire_gold_label=Label(root,text="Gold:")
+
+radiant_ability_label=Label(root,text="Abilities")
+dire_ability_label=Label(root,text="Abilities")
+
+radiant_strike_label=Label(root,text="Strike")
+dire_strike_label=Label(root,text="Strike")
+
+radiant_hp_value_label_text=IntVar()
+radiant_hp_value_label_text.set(radiant.hp)
+radiant_hp_value_label=Label(root,textvariable=radiant_hp_value_label_text)
+
+radiant_mana_value_label_text=IntVar()
+radiant_mana_value_label_text.set(radiant.mana)
+radiant_mana_value_label=Label(root,textvariable=radiant_mana_value_label_text)
+
+radiant_gold_value_label_text=IntVar()
+radiant_gold_value_label_text.set(radiant.gold)
+radiant_gold_value_label=Label(root,textvariable=radiant_gold_value_label_text)
+
+dire_hp_value_label_text=IntVar()
+dire_hp_value_label_text.set(dire.hp)
+dire_hp_value_label=Label(root,textvariable=dire_hp_value_label_text)
+
+dire_mana_value_label_text=IntVar()
+dire_mana_value_label_text.set(dire.mana)
+dire_mana_value_label=Label(root,textvariable=dire_mana_value_label_text)
+
+dire_gold_value_label_text=IntVar()
+dire_gold_value_label_text.set(dire.gold)
+dire_gold_value_label=Label(root,textvariable=dire_gold_value_label_text)
+
+#start_button=Button(root,text="Enter Battle",command=lambda:turn)
+
+#radiant_strike_button=Button(root,text="Strike",state="disabled",command=lambda:radiant_strike)
+#dire_strike_button=Button(root,text="Strike",state="disabled",command=lambda:dire_strike)
+
+
+#layout:
+
+radiant_label.grid(row=1,column=1)
+radiant_hp_label.grid(row=2,column=1)
+radiant_mana_label.grid(row=3,column=1)
+radiant_gold_label.grid(row=4,column=1)
+radiant_hp_value_label.grid(row=2,column=2)
+radiant_mana_value_label.grid(row=3,column=2)
+radiant_gold_value_label.grid(row=4,column=2)
+radiant_ability_label.grid(row=5,column=1)
+
+dire_label.grid(row=1,column=4)
+dire_hp_label.grid(row=2,column=4)
+dire_mana_label.grid(row=3,column=4)
+dire_gold_label.grid(row=4,column=4)
+dire_ability_label.grid(row=5,column=4)
+
+
+
+
+
+root.mainloop()
+
+
+
+
+
