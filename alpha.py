@@ -261,6 +261,14 @@ register(radiant_basillius_button,"+2 Mana Regen Every Level. Cost Increases By 
 dire_basillius_button = Button(root,text="Ring of Basillius",state="disabled",command=lambda:dire_buy_basillius())
 register(dire_basillius_button,"+2 Mana Regen Every Level. Cost Increases By 5 For Each Level")
 
+radiant_basillius_level_label_text=IntVar()
+radiant_basillius_level_label_text.set(radiant.basillius.level)
+radiant_basillius_level_label=Label(root,textvariable=radiant_basillius_level_label_text)
+
+dire_basillius_level_label_text=IntVar()
+dire_basillius_level_label_text.set(dire.basillius.level)
+dire_basillius_level_label=Label(root,textvariable=dire_basillius_level_label_text)
+
 radiant_strike_level_label_text=IntVar()
 radiant_strike_level_label_text.set(radiant.strike.level)
 radiant_strike_level_label=Label(root,textvariable=radiant_strike_level_label_text)
@@ -273,6 +281,7 @@ radiant_greed_button=Button(root,text="Greed",state="disabled",command=lambda:ra
 register(radiant_greed_button,"Steal 2 Gold At The Cost of 2 HP")
 dire_greed_button=Button(root,text="Greed",state="disabled",command=lambda:dire_greed())
 register(dire_greed_button,"Steal 2 Gold At The Cost of 2 HP")
+
 
 #button functions:
 
@@ -311,9 +320,9 @@ def turn():
 		radiant_greed_button.configure(state="disabled")
 	if dire.hp <= 2:
 		dire_greed_button.configure(state="disabled")
-	if radiant.gold < radiant.basillius.cost: #Ring of Basillius
+	if radiant.gold + 1 < radiant.basillius.cost: #Ring of Basillius, + 1 because we're only updating the value later
 		radiant_basillius_button.configure(state="disabled")
-	if dire.gold < dire.basillius.cost:
+	if dire.gold + 1 < dire.basillius.cost:
 		dire_basillius_button.configure(state="disabled")
 	radiant.gold += radiant.goldregen
 	dire.gold += dire.goldregen
@@ -344,15 +353,17 @@ def radiant_buy_basillius():
 	radiant.manaregen -= radiant.basillius.manaregen
 	radiant.basillius.levelup()
 	radiant.manaregen += radiant.basillius.manaregen
-	radiant_gold_value_label_text.set(radiant.gold)
+	radiant_basillius_level_label_text.set(radiant.basillius.level)
+	#radiant_gold_value_label_text.set(radiant.gold)
 	turn()
-	
+			
 def dire_buy_basillius():
 	dire.gold -= dire.basillius.cost
 	dire.manaregen -= dire.basillius.manaregen
 	dire.basillius.levelup()
 	dire.manaregen += dire.basillius.manaregen
-	dire_gold_value_label_text.set(dire.gold)
+	dire_basillius_level_label_text.set(dire.basillius.level)
+	#dire_gold_value_label_text.set(dire.gold)
 	turn()
 		
 def radiant_greed():
@@ -383,14 +394,15 @@ radiant_hp_value_label.grid(row=2,column=2)
 radiant_mana_value_label.grid(row=3,column=2)
 radiant_gold_value_label.grid(row=4,column=2)
 radiant_ability_label.grid(row=5,column=1)
-
+	
 radiant_strike_button.grid(row=6,column=1)
 radiant_strike_level_label.grid(row=7,column=1)
 
 radiant_greed_button.grid(row=6,column=2)
-
+	
 radiant_item_label.grid(row=8,column=1)
 radiant_basillius_button.grid(row=9,column=1)
+radiant_basillius_level_label.grid(row=10,column=1)	
 
 start_button.grid(row=1,column=3)
 
@@ -410,7 +422,7 @@ dire_greed_button.grid(row=6,column=5)
 
 dire_item_label.grid(row=8,column=4)
 dire_basillius_button.grid(row=9,column=4)
-
+dire_basillius_level_label.grid(row=10,column=4)
 
 root.mainloop()
 
