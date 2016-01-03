@@ -93,6 +93,7 @@ dire_gold_value_label=Label(root,textvariable=dire_gold_value_label_text)
 #radiant_strike_button=Button(root,text="Strike",state="disabled",command=lambda:radiant_strike)
 #dire_strike_button=Button(root,text="Strike",state="disabled",command=lambda:dire_strike)
 
+#need to define the above later
 
 #layout:
 
