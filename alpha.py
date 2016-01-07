@@ -167,7 +167,7 @@ class Hero(object):
 		self.gold=0
 		self.hpregen=1
 		self.manaregen=1 
-		self.goldregen=1 
+		self.goldregen=1
 		self.strike=Strike()
 		self.greed=Greed()
 		self.freeze=Freeze()
@@ -361,9 +361,9 @@ dire_freeze_level_label_text.set(dire.freeze.level)
 dire_freeze_level_label = Label(root, textvariable=dire_freeze_level_label_text)
 
 radiant_burn_button = Button(root,text="Burn",state="disabled",command=lambda:radiant_burn())
-register(radiant_burn_button,"Deals 1 Base Damage and Level X 5 Mana Burn. Base Mana Cost is 10. Levels up Every Time it is Used.\n +1 Damage and +5 Mana Burn Every Level. Mana Cost Increases by 1 Every Level" )
+register(radiant_burn_button,"Deals 1 Base Damage and 10 Base Mana Burn. Base Mana Cost is 8. Levels up Every Time it is Used.\n +1 Damage and +5 Mana Burn Every Level. Mana Cost Increases by 1 Every Level" )
 dire_burn_button = Button(root,text="Burn",state="disabled",command=lambda:dire_burn())
-register(dire_burn_button,"Deals 1 Base Damage and Level X 5 Mana Burn. Base Mana Cost is 10. Levels up Every Time it is Used.\n +1 Damage and +5 Mana Burn Every Level. Mana Cost Increases by 1 Every Level" )
+register(dire_burn_button,"Deals 1 Base Damage and 10 Base Mana Burn. Base Mana Cost is 8. Levels up Every Time it is Used.\n +1 Damage and +5 Mana Burn Every Level. Mana Cost Increases by 1 Every Level" )
 
 radiant_burn_level_label_text=IntVar()
 radiant_burn_level_label_text.set(radiant.burn.level)
