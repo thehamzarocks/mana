@@ -175,6 +175,7 @@ class Hero(object):
 		self.burn=Burn()
 		self.basillius=Basillius()
 		self.healing=Healing()
+		self.forcestaff=ForceStaff()
 		
 	def gainhp(self,hpgain):
 		self.hp=self.hp + hpgain 
@@ -263,6 +264,18 @@ class Healing(object):
 		self.level+=1
 		self.hpregen+=1
 		self.cost+=5
+		
+class ForceStaff(object):
+	def __init__(self):
+		self.level=0;
+		self.force=0; #random bonus attack damge to Strike
+		self.cost=5
+		
+	def levelup(self):
+		self.level += 1
+		self.force += 3
+		self.cost += 5
+		
 		
 root = Tk()
 
@@ -356,6 +369,19 @@ dire_healing_level_label_text=IntVar()
 dire_healing_level_label_text.set(dire.healing.level)
 dire_healing_level_label=Label(root,textvariable=dire_healing_level_label_text)
 
+radiant_forcestaff_button=Button(root,text="Force Staff",state="disabled",command=lambda:radiant_buy_forcestaff())
+register(radiant_forcestaff_button,"Adds a random damage bonus between 1 and LevelX3 to Strike. Cost = LevelX5")
+dire_forcestaff_button=Button(root,text="Force Staff",state="disabled",command=lambda:dire_buy_forcestaff())
+register(dire_forcestaff_button,"Adds a random damage bonus between 1 and LevelX3 to Strike. Cost = LevelX5")
+
+radiant_forcestaff_level_label_text=IntVar()
+radiant_forcestaff_level_label_text.set(radiant.forcestaff.level)
+radiant_forcestaff_level_label=Label(root,textvariable=radiant_forcestaff_level_label_text)
+
+dire_forcestaff_level_label_text=IntVar()
+dire_forcestaff_level_label_text.set(dire.forcestaff.level)
+dire_forcestaff_level_label=Label(root,textvariable=dire_forcestaff_level_label_text)
+
 radiant_strike_level_label_text=IntVar()
 radiant_strike_level_label_text.set(radiant.strike.level)
 radiant_strike_level_label=Label(root,textvariable=radiant_strike_level_label_text)
@@ -431,12 +457,14 @@ def turn(arg):
 		dire_burn_button.configure(state="disabled")
 		dire_basillius_button.configure(state="disabled")
 		dire_healing_button.configure(state="disabled")
+		dire_forcestaff_button.configure(state="disabled")
 		radiant_strike_button.configure(state="normal")
 		radiant_greed_button.configure(state="normal")
 		radiant_freeze_button.configure(state="normal")
 		radiant_burn_button.configure(state="normal")
 		radiant_basillius_button.configure(state="normal")
 		radiant_healing_button.configure(state="normal")
+		radiant_forcestaff_button.configure(state="normal")
 		radiant.hp += radiant.hpregen
 		radiant.mana += radiant.manaregen
 	if t%2==1: #dire's turn
@@ -446,12 +474,14 @@ def turn(arg):
 		radiant_burn_button.configure(state="disabled")
 		radiant_basillius_button.configure(state="disabled")
 		radiant_healing_button.configure(state="disabled")
+		radiant_forcestaff_button.configure(state="disabled")
 		dire_strike_button.configure(state="normal")
 		dire_greed_button.configure(state="normal")
 		dire_freeze_button.configure(state="normal")
 		dire_burn_button.configure(state="normal")
 		dire_basillius_button.configure(state="normal")
 		dire_healing_button.configure(state="normal")
+		dire_forcestaff_button.configure(state="normal")
 		dire.hp += dire.hpregen
 		dire.mana += dire.manaregen
 	if radiant.strike.manacost > radiant.mana: #strike
@@ -478,6 +508,10 @@ def turn(arg):
 		radiant_healing_button.configure(state="disabled")
 	if dire.gold + dire.goldregen < dire.healing.cost:
 		dire_healing_button.configure(state="disabled")
+	if radiant.gold + radiant.goldregen < radiant.forcestaff.cost:
+		radiant_forcestaff_button.configure(state="disabled")
+	if dire.gold + dire.goldregen < dire.forcestaff.cost:
+		dire_forcestaff_button.configure(state="disabled")
 	radiant.gold += radiant.goldregen
 	dire.gold += dire.goldregen
 	radiant_hp_value_label_text.set(radiant.hp)
@@ -491,7 +525,10 @@ def turn(arg):
 def radiant_strike():
 	#radiant_strike_clicked=1
 	radiant.mana -= radiant.strike.manacost
-	dire.hp -= radiant.strike.damage
+	bonusdamage = 0
+	if radiant.forcestaff.level > 0:
+		bonusdamage = randint(1,radiant.forcestaff.force) #ForceStaff effect on Strike
+	dire.hp -= radiant.strike.damage + bonusdamage
 	radiant.strike.levelup()
 	radiant_strike_level_label_text.set(radiant.strike.level)
 	global radiant_turns
@@ -504,7 +541,10 @@ def radiant_strike():
 def dire_strike():
 	#dire_strike_clicked=1
 	dire.mana -= dire.strike.manacost
-	radiant.hp -= dire.strike.damage
+	bonusdamage = 0
+	if dire.forcestaff.level > 0:
+		bonusdamage = randint(1,dire.forcestaff.force)
+	radiant.hp -= dire.strike.damage + bonusdamage
 	dire.strike.levelup()
 	dire_strike_level_label_text.set(dire.strike.level)
 	global dire_turns
@@ -650,6 +690,28 @@ def dire_buy_healing():
 		turn(2)
 	else:
 		turn(1)
+		
+def radiant_buy_forcestaff():
+	radiant.gold -= radiant.forcestaff.cost
+	radiant.forcestaff.levelup()
+	radiant_forcestaff_level_label_text.set(radiant.forcestaff.level)
+	global radiant_turns
+	if radiant_turns > 0:
+		radiant_turns -= 1
+		turn(1)
+	else:
+		turn(2)
+		
+def dire_buy_forcestaff():
+	dire.gold -= dire.forcestaff.cost
+	dire.forcestaff.levelup();
+	dire_forcestaff_level_label_text.set(dire.forcestaff.level)
+	global dire_turns
+	if dire_turns > 0:
+		dire_turns -= 1
+		turn(2)
+	else:
+		turn(1)
 	
 #layout:
 
@@ -689,6 +751,9 @@ radiant_basillius_level_label.grid(row=12,column=1)
 radiant_healing_button.grid(row=11,column=2)
 radiant_healing_level_label.grid(row=12,column=2)
 
+radiant_forcestaff_button.grid(row=13,column=1)
+radiant_forcestaff_level_label.grid(row=14,column=1)
+
 start_button.grid(row=1,column=3)
 
 dire_label.grid(row=1,column=4)
@@ -719,6 +784,9 @@ dire_basillius_level_label.grid(row=12,column=4)
 
 dire_healing_button.grid(row=11,column=5)
 dire_healing_level_label.grid(row=12,column=5)
+
+dire_forcestaff_button.grid(row=13,column=4)
+dire_forcestaff_level_label.grid(row=14,column=4)
 
 root.mainloop()
 
