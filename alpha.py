@@ -1,6 +1,7 @@
 from random import randint
 from Tkinter import *
 import tkMessageBox
+import subprocess
 
 #
 # WCKLIB
@@ -173,6 +174,7 @@ class Hero(object):
 		self.freeze=Freeze()
 		self.burn=Burn()
 		self.basillius=Basillius()
+		self.healing=Healing()
 		
 	def gainhp(self,hpgain):
 		self.hp=self.hp + hpgain 
@@ -223,7 +225,7 @@ class Freeze(object):
 		
 	def levelup(self):
 		self.level +=1
-		self.manacost+=1
+		self.manacost+=3
 		self.turns+=1
 
 class Burn(object):
@@ -250,7 +252,16 @@ class Basillius(object):
 		self.manaregen+=2
 		self.cost+=5
 		
-
+class Healing(object):
+	def __init__(self):
+		self.level=0
+		self.hpregen=0
+		self.cost=5
+		
+	def levelup(self):
+		self.level+=1
+		self.hpregen+=1
+		self.cost+=5
 		
 root = Tk()
 
@@ -259,7 +270,12 @@ dire=Hero()
 
 #widgets:
 
-		
+#menu widgets:
+
+menubar = Menu(root);
+menubar.add_command(label="Help",command =lambda:manual())
+
+#other widgets:
 
 radiant_label=Label(root,text="Radiant")
 dire_label=Label(root,text="Dire")
@@ -314,9 +330,9 @@ radiant_item_label = Label(root,text="Items")
 dire_item_label = Label(root,text="Items")
 
 radiant_basillius_button = Button(root,text="Ring of Basillius",state="disabled",command=lambda:radiant_buy_basillius())
-register(radiant_basillius_button,"+2 Mana Regen Every Level.\n Cost Increases By 5 For Each Level")
+register(radiant_basillius_button,"+2 Mana Regen Every Level.\n Cost = (Level+1) * 5")
 dire_basillius_button = Button(root,text="Ring of Basillius",state="disabled",command=lambda:dire_buy_basillius())
-register(dire_basillius_button,"+2 Mana Regen Every Level.\n Cost Increases By 5 For Each Level")
+register(dire_basillius_button,"+2 Mana Regen Every Level.\n Cost = (Level +1) * 5")
 
 radiant_basillius_level_label_text=IntVar()
 radiant_basillius_level_label_text.set(radiant.basillius.level)
@@ -325,6 +341,19 @@ radiant_basillius_level_label=Label(root,textvariable=radiant_basillius_level_la
 dire_basillius_level_label_text=IntVar()
 dire_basillius_level_label_text.set(dire.basillius.level)
 dire_basillius_level_label=Label(root,textvariable=dire_basillius_level_label_text)
+
+radiant_healing_button=Button(root,text="Ring of Healing",state="disabled",command=lambda:radiant_buy_healing())
+register(radiant_healing_button,"+3 HP Regen Every Level.\n Cost = (Level +1) * 5")
+dire_healing_button=Button(root,text="Ring of Healing",state="disabled",command=lambda:dire_buy_healing())
+register(dire_healing_button,"+3 HP Regen Every Level.\n Cost = (Level +1) * 5")
+
+radiant_healing_level_label_text=IntVar()
+radiant_healing_level_label_text.set(radiant.healing.level)
+radiant_healing_level_label=Label(root,textvariable=radiant_healing_level_label_text)
+
+dire_healing_level_label_text=IntVar()
+dire_healing_level_label_text.set(dire.healing.level)
+dire_healing_level_label=Label(root,textvariable=dire_healing_level_label_text)
 
 radiant_strike_level_label_text=IntVar()
 radiant_strike_level_label_text.set(radiant.strike.level)
@@ -348,9 +377,9 @@ dire_greed_level_label_text.set(dire.greed.level)
 dire_greed_level_label=Label(root,textvariable=dire_greed_level_label_text)
 
 radiant_freeze_button=Button(root,text="Freeze",state="disabled",command=lambda:radiant_freeze())
-register(radiant_freeze_button,"3 Damage Every Time It Is Used. Grants Additional Turns Equal To The Level Of Freeze.\n Base Mana Cost=7. Mana Cost Increases By 1 Every Level")
+register(radiant_freeze_button,"3 Damage Every Time It Is Used. Grants Additional Turns Equal To The Level Of Freeze.\n Base Mana Cost=7. Mana Cost Increases By 3 Every Level")
 dire_freeze_button=Button(root,text="Freeze",state="disabled",command=lambda:dire_freeze())
-register(dire_freeze_button,"3 Damage Every Time It Is Used. Grants Additional Turns Equal To The Level Of Freeze. Base Mana Cost=7. Mana Cost Increases By 1 Every Level")
+register(dire_freeze_button,"3 Damage Every Time It Is Used. Grants Additional Turns Equal To The Level Of Freeze. Base Mana Cost=7. Mana Cost Increases By 3 Every Level")
 
 radiant_freeze_level_label_text=IntVar()
 radiant_freeze_level_label_text.set(radiant.freeze.level)
@@ -375,6 +404,11 @@ dire_burn_level_label=Label(root,textvariable=dire_burn_level_label_text)
 
 #button functions:
 
+#menu buttons:
+
+def manual():
+	subprocess.call(['cmd.exe', '/c', 'index.html'])
+
 def turn(arg):
 	start_button.configure(state="disabled")
 	if radiant.hp <= 0:
@@ -395,11 +429,13 @@ def turn(arg):
 		dire_freeze_button.configure(state="disabled")
 		dire_burn_button.configure(state="disabled")
 		dire_basillius_button.configure(state="disabled")
+		dire_healing_button.configure(state="disabled")
 		radiant_strike_button.configure(state="normal")
 		radiant_greed_button.configure(state="normal")
 		radiant_freeze_button.configure(state="normal")
 		radiant_burn_button.configure(state="normal")
 		radiant_basillius_button.configure(state="normal")
+		radiant_healing_button.configure(state="normal")
 		radiant.hp += radiant.hpregen
 		radiant.mana += radiant.manaregen
 	if t%2==1: #dire's turn
@@ -408,11 +444,13 @@ def turn(arg):
 		radiant_freeze_button.configure(state="disabled")
 		radiant_burn_button.configure(state="disabled")
 		radiant_basillius_button.configure(state="disabled")
+		radiant_healing_button.configure(state="disabled")
 		dire_strike_button.configure(state="normal")
 		dire_greed_button.configure(state="normal")
 		dire_freeze_button.configure(state="normal")
 		dire_burn_button.configure(state="normal")
 		dire_basillius_button.configure(state="normal")
+		dire_healing_button.configure(state="normal")
 		dire.hp += dire.hpregen
 		dire.mana += dire.manaregen
 	if radiant.strike.manacost > radiant.mana: #strike
@@ -431,10 +469,14 @@ def turn(arg):
 		radiant_burn_button.configure(state="disabled")
 	if dire.mana < dire.burn.manacost:
 		dire_burn_button.configure(state="disabled")
-	if radiant.gold + 1 < radiant.basillius.cost: #Ring of Basillius, + 1 because we're only updating the value later
+	if radiant.gold + radiant.goldregen < radiant.basillius.cost: #Ring of Basillius, + radiant.goldregen because we're only updating the value later
 		radiant_basillius_button.configure(state="disabled")
-	if dire.gold + 1 < dire.basillius.cost:
+	if dire.gold + dire.goldregen < dire.basillius.cost:
 		dire_basillius_button.configure(state="disabled")
+	if radiant.gold + radiant.goldregen < radiant.healing.cost:#Ring of Healing
+		radiant_healing_button.configure(state="disabled")
+	if dire.gold + dire.goldregen < dire.healing.cost:
+		dire_healing_button.configure(state="disabled")
 	radiant.gold += radiant.goldregen
 	dire.gold += dire.goldregen
 	radiant_hp_value_label_text.set(radiant.hp)
@@ -456,7 +498,7 @@ def radiant_strike():
 		radiant_turns -= 1
 		turn(1)
 	else:
-		turn(0)
+		turn(2)
 	
 def dire_strike():
 	#dire_strike_clicked=1
@@ -469,7 +511,7 @@ def dire_strike():
 		dire_turns -= 1
 		turn(2)
 	else:
-		turn(0)
+		turn(1)
 	
 def radiant_buy_basillius():
 	#radiant_buy_basillius_clicked=1
@@ -483,7 +525,7 @@ def radiant_buy_basillius():
 		radiant_turns -= 1
 		turn(1)
 	else:
-		turn(0)
+		turn(2)
 			
 def dire_buy_basillius():
 	#dire_buy_basillius_clicked=1
@@ -498,7 +540,7 @@ def dire_buy_basillius():
 		dire_turns -= 1
 		turn(2)
 	else:
-		turn(0)
+		turn(1)
 		
 def radiant_greed():
 	#radiant_greed_clicked=1
@@ -514,7 +556,7 @@ def radiant_greed():
 		radiant_turns -= 1
 		turn(1)
 	else:
-		turn(0)
+		turn(2)
 	
 def dire_greed():
 	#dire_greed_clicked=1
@@ -530,7 +572,7 @@ def dire_greed():
 		dire_turns -= 1
 		turn(2)
 	else:
-		turn(0)
+		turn(1)
 	
 
 def radiant_freeze():
@@ -541,6 +583,7 @@ def radiant_freeze():
 	dire.hp -= radiant.freeze.damage
 	radiant.freeze.levelup()
 	radiant_freeze_level_label_text.set(radiant.freeze.level)
+	radiant_turns -= 1
 	turn(1)
 	
 def dire_freeze():
@@ -551,6 +594,7 @@ def dire_freeze():
 	radiant.hp -= dire.freeze.damage
 	dire.freeze.levelup()
 	dire_freeze_level_label_text.set(dire.freeze.level)
+	dire_turns -= 1
 	turn(2)
 	
 def radiant_burn():
@@ -565,7 +609,7 @@ def radiant_burn():
 		radiant_turns -= 1
 		turn(1)
 	else:
-		turn(0)
+		turn(2)
 	
 def dire_burn():
 	dire.mana -= dire.burn.manacost
@@ -578,9 +622,41 @@ def dire_burn():
 		dire_turns -= 1
 		turn(2)
 	else:
-		turn(0)
+		turn(1)
+		
+def radiant_buy_healing():
+	radiant.gold -= radiant.healing.cost
+	radiant.hpregen -= radiant.healing.hpregen #to prevent the effects from being compounded
+	radiant.healing.levelup()
+	radiant.hpregen += radiant.healing.hpregen
+	radiant_healing_level_label_text.set(radiant.healing.level)
+	global radiant_turns
+	if radiant_turns > 0:
+		radiant_turns -= 1
+		turn(1)
+	else:
+		turn(2)
+	
+def dire_buy_healing():
+	dire.gold -= dire.healing.cost
+	dire.hpregen -= dire.healing.hpregen
+	dire.healing.levelup()
+	dire.hpregen += dire.healing.hpregen
+	dire_healing_level_label_text.set(dire.healing.level)
+	global dire_turns
+	if dire_turns > 0:
+		dire_turns -= 1
+		turn(2)
+	else:
+		turn(1)
 	
 #layout:
+
+#menu layout:
+
+root.config(menu = menubar)
+
+#other layouts:
 
 radiant_label.grid(row=1,column=1)
 radiant_hp_label.grid(row=2,column=1)
@@ -605,8 +681,12 @@ radiant_burn_level_label.grid(row=9,column=2)
 
 	
 radiant_item_label.grid(row=10,column=1)
+
 radiant_basillius_button.grid(row=11,column=1)
 radiant_basillius_level_label.grid(row=12,column=1)	
+
+radiant_healing_button.grid(row=11,column=2)
+radiant_healing_level_label.grid(row=12,column=2)
 
 start_button.grid(row=1,column=3)
 
@@ -632,8 +712,12 @@ dire_burn_button.grid(row=8,column=5)
 dire_burn_level_label.grid(row=9,column=5)
 
 dire_item_label.grid(row=10,column=4)
+
 dire_basillius_button.grid(row=11,column=4)
 dire_basillius_level_label.grid(row=12,column=4)
+
+dire_healing_button.grid(row=11,column=5)
+dire_healing_level_label.grid(row=12,column=5)
 
 root.mainloop()
 
