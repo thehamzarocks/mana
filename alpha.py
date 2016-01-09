@@ -214,6 +214,7 @@ class Greed(object):
 	def levelup(self):
 		self.level=self.level+1
 		self.goldgrab=self.goldgrab+2
+		self.hpcost=self.hpcost+2
 		
 	
 class Freeze(object):
@@ -307,7 +308,7 @@ radiant_gold_value_label_text.set(radiant.gold)
 radiant_gold_value_label=Label(root,textvariable=radiant_gold_value_label_text)
 
 dire_hp_value_label_text=IntVar()
-dire_hp_value_label_text.set(dire.hp)
+dire_hp_value_label_text.set(dire.hp)		
 dire_hp_value_label=Label(root,textvariable=dire_hp_value_label_text)
 
 dire_mana_value_label_text=IntVar()
@@ -364,9 +365,9 @@ dire_strike_level_label_text.set(dire.strike.level)
 dire_strike_level_label=Label(root,textvariable=dire_strike_level_label_text)
 
 radiant_greed_button=Button(root,text="Greed",state="disabled",command=lambda:radiant_greed())
-register(radiant_greed_button,"Steal LevelX2 Gold At The Cost of 2 HP")
+register(radiant_greed_button,"Steal LevelX2 Gold At The Cost of LevelX2 HP")
 dire_greed_button=Button(root,text="Greed",state="disabled",command=lambda:dire_greed())
-register(dire_greed_button,"Steal LevelX2 Gold At The Cost of 2 HP")
+register(dire_greed_button,"Steal LevelX2 Gold At The Cost of LevelX2 HP")
 
 radiant_greed_level_label_text=IntVar()
 radiant_greed_level_label_text.set(radiant.greed.level)
@@ -544,7 +545,7 @@ def dire_buy_basillius():
 		
 def radiant_greed():
 	#radiant_greed_clicked=1
-	radiant.hp -= 2
+	radiant.hp -= radiant.greed.hpcost
 	radiant.gold +=radiant.greed.goldgrab
 	dire.gold -= radiant.greed.goldgrab
 	radiant.greed.levelup()
@@ -560,7 +561,7 @@ def radiant_greed():
 	
 def dire_greed():
 	#dire_greed_clicked=1
-	dire.hp -= 2
+	dire.hp -= dire.greed.hpcost
 	dire.gold += dire.greed.goldgrab
 	radiant.gold -= dire.greed.goldgrab
 	dire.greed.levelup()
