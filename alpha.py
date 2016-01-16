@@ -165,7 +165,7 @@ class Hero(object):
 	def __init__(self):
 		self.hp=10
 		self.mana=10
-		self.gold=0
+		self.gold=5
 		self.hpregen=1
 		self.manaregen=1 
 		self.goldregen=1
@@ -176,6 +176,7 @@ class Hero(object):
 		self.basillius=Basillius()
 		self.healing=Healing()
 		self.forcestaff=ForceStaff()
+		self.mysticaura=MysticAura()
 		
 	def gainhp(self,hpgain):
 		self.hp=self.hp + hpgain 
@@ -247,7 +248,7 @@ class Basillius(object):
 	def __init__(self):
 		self.level = 0
 		self.manaregen = 0
-		self.cost = 5	
+		self.cost = 5
 		
 	def levelup(self):
 		self.level += 1
@@ -273,9 +274,19 @@ class ForceStaff(object):
 		
 	def levelup(self):
 		self.level += 1
-		self.force += 3
+		self.force += 1
 		self.cost += 5
 		
+class MysticAura(object):
+	def __init__(self):
+		self.level=0
+		self.manacostreduction=0
+		self.cost=5
+		
+	def levelup(self):
+		self.level += 1
+		self.manacostreduction += 1
+		self.cost += 5
 		
 root = Tk()
 
@@ -344,9 +355,9 @@ radiant_item_label = Label(root,text="Items")
 dire_item_label = Label(root,text="Items")
 
 radiant_basillius_button = Button(root,text="Ring of Basillius",state="disabled",command=lambda:radiant_buy_basillius())
-register(radiant_basillius_button,"+2 Mana Regen Every Level.\n Cost = (Level+1) * 5")
+register(radiant_basillius_button,"+2 Mana Regen Every Level.\n Cost = LevelX5")
 dire_basillius_button = Button(root,text="Ring of Basillius",state="disabled",command=lambda:dire_buy_basillius())
-register(dire_basillius_button,"+2 Mana Regen Every Level.\n Cost = (Level +1) * 5")
+register(dire_basillius_button,"+2 Mana Regen Every Level.\n Cost = Level5")
 
 radiant_basillius_level_label_text=IntVar()
 radiant_basillius_level_label_text.set(radiant.basillius.level)
@@ -357,9 +368,9 @@ dire_basillius_level_label_text.set(dire.basillius.level)
 dire_basillius_level_label=Label(root,textvariable=dire_basillius_level_label_text)
 
 radiant_healing_button=Button(root,text="Ring of Healing",state="disabled",command=lambda:radiant_buy_healing())
-register(radiant_healing_button,"+3 HP Regen Every Level.\n Cost = (Level +1) * 5")
+register(radiant_healing_button,"+3 HP Regen Every Level.\n Cost = LevelX5")
 dire_healing_button=Button(root,text="Ring of Healing",state="disabled",command=lambda:dire_buy_healing())
-register(dire_healing_button,"+3 HP Regen Every Level.\n Cost = (Level +1) * 5")
+register(dire_healing_button,"+3 HP Regen Every Level.\n Cost = Level5")
 
 radiant_healing_level_label_text=IntVar()
 radiant_healing_level_label_text.set(radiant.healing.level)
@@ -370,9 +381,9 @@ dire_healing_level_label_text.set(dire.healing.level)
 dire_healing_level_label=Label(root,textvariable=dire_healing_level_label_text)
 
 radiant_forcestaff_button=Button(root,text="Force Staff",state="disabled",command=lambda:radiant_buy_forcestaff())
-register(radiant_forcestaff_button,"Adds a random damage bonus between 1 and LevelX3 to Strike. Cost = LevelX5")
+register(radiant_forcestaff_button,"Adds a random damage bonus between 1 and Level to Strike. Cost = LevelX5")
 dire_forcestaff_button=Button(root,text="Force Staff",state="disabled",command=lambda:dire_buy_forcestaff())
-register(dire_forcestaff_button,"Adds a random damage bonus between 1 and LevelX3 to Strike. Cost = LevelX5")
+register(dire_forcestaff_button,"Adds a random damage bonus between 1 and Level to Strike. Cost = LevelX5")
 
 radiant_forcestaff_level_label_text=IntVar()
 radiant_forcestaff_level_label_text.set(radiant.forcestaff.level)
@@ -381,6 +392,19 @@ radiant_forcestaff_level_label=Label(root,textvariable=radiant_forcestaff_level_
 dire_forcestaff_level_label_text=IntVar()
 dire_forcestaff_level_label_text.set(dire.forcestaff.level)
 dire_forcestaff_level_label=Label(root,textvariable=dire_forcestaff_level_label_text)
+
+radiant_mysticaura_button=Button(root,text="Mystic Aura",state="disabled",command=lambda:radiant_buy_mysticaura())
+register(radiant_mysticaura_button,"Reduces the Mana Cost of all Abilities by 1 every time it is upgraded.\nCost=LevelX5")
+dire_mysticaura_button=Button(root,text="Mystic Aura",state="disabled",command=lambda:dire_buy_mysticaura())
+register(dire_mysticaura_button,"Reduces the Mana Cost of all Abilities by 1 every time it is upgraded.\nCost=LevelX5")
+
+radiant_mysticaura_level_label_text=IntVar()
+radiant_mysticaura_level_label_text.set(radiant.mysticaura.level)
+radiant_mysticaura_level_label=Label(root,textvariable=radiant_mysticaura_level_label_text)
+
+dire_mysticaura_level_label_text=IntVar()
+dire_mysticaura_level_label_text.set(dire.mysticaura.level)
+dire_mysticaura_level_label=Label(root,textvariable=dire_mysticaura_level_label_text)
 
 radiant_strike_level_label_text=IntVar()
 radiant_strike_level_label_text.set(radiant.strike.level)
@@ -440,9 +464,10 @@ def turn(arg):
 	start_button.configure(state="disabled")
 	if radiant.hp <= 0:
 		tkMessageBox.showinfo("Dire Victory", "Dire Victory")
-		
+		root.destroy()
 	if dire.hp <= 0:
 		tkMessageBox.showinfo("Radiant Victory", "Radiant Victory")
+		root.destroy()
 	radiant_strike_clicked=0
 	if arg == 0:	
 		t = randint(0,99)
@@ -458,6 +483,7 @@ def turn(arg):
 		dire_basillius_button.configure(state="disabled")
 		dire_healing_button.configure(state="disabled")
 		dire_forcestaff_button.configure(state="disabled")
+		dire_mysticaura_button.configure(state="disabled")
 		radiant_strike_button.configure(state="normal")
 		radiant_greed_button.configure(state="normal")
 		radiant_freeze_button.configure(state="normal")
@@ -465,6 +491,7 @@ def turn(arg):
 		radiant_basillius_button.configure(state="normal")
 		radiant_healing_button.configure(state="normal")
 		radiant_forcestaff_button.configure(state="normal")
+		radiant_mysticaura_button.configure(state="normal")
 		radiant.hp += radiant.hpregen
 		radiant.mana += radiant.manaregen
 	if t%2==1: #dire's turn
@@ -475,6 +502,7 @@ def turn(arg):
 		radiant_basillius_button.configure(state="disabled")
 		radiant_healing_button.configure(state="disabled")
 		radiant_forcestaff_button.configure(state="disabled")
+		radiant_mysticaura_button.configure(state="disabled")
 		dire_strike_button.configure(state="normal")
 		dire_greed_button.configure(state="normal")
 		dire_freeze_button.configure(state="normal")
@@ -482,6 +510,7 @@ def turn(arg):
 		dire_basillius_button.configure(state="normal")
 		dire_healing_button.configure(state="normal")
 		dire_forcestaff_button.configure(state="normal")
+		dire_mysticaura_button.configure(state="normal")
 		dire.hp += dire.hpregen
 		dire.mana += dire.manaregen
 	if radiant.strike.manacost > radiant.mana: #strike
@@ -508,10 +537,14 @@ def turn(arg):
 		radiant_healing_button.configure(state="disabled")
 	if dire.gold + dire.goldregen < dire.healing.cost:
 		dire_healing_button.configure(state="disabled")
-	if radiant.gold + radiant.goldregen < radiant.forcestaff.cost:
+	if radiant.gold + radiant.goldregen < radiant.forcestaff.cost:#Force Staff
 		radiant_forcestaff_button.configure(state="disabled")
 	if dire.gold + dire.goldregen < dire.forcestaff.cost:
 		dire_forcestaff_button.configure(state="disabled")
+	if radiant.gold + radiant.goldregen < radiant.mysticaura.cost:#Mystic Aura
+		radiant_mysticaura_button.configure(state="disabled")
+	if dire.gold + dire.goldregen < dire.mysticaura.cost:
+		dire_mysticaura_button.configure(state="disabled")
 	radiant.gold += radiant.goldregen
 	dire.gold += dire.goldregen
 	radiant_hp_value_label_text.set(radiant.hp)
@@ -712,7 +745,42 @@ def dire_buy_forcestaff():
 		turn(2)
 	else:
 		turn(1)
+		
+def radiant_buy_mysticaura():
+	radiant.gold -= radiant.mysticaura.cost
+	radiant.strike.manacost += radiant.mysticaura.manacostreduction
+	radiant.freeze.manacost += radiant.mysticaura.manacostreduction
+	radiant.burn.manacost += radiant.mysticaura.manacostreduction
+	radiant.mysticaura.levelup()
+	radiant.strike.manacost -= radiant.mysticaura.manacostreduction
+	radiant.freeze.manacost -= radiant.mysticaura.manacostreduction
+	radiant.burn.manacost -= radiant.mysticaura.manacostreduction
+	radiant_mysticaura_level_label_text.set(radiant.mysticaura.level)
+	global radiant_turns
+	if radiant_turns > 0:
+		radiant_turns -= 1
+		turn(1)
+	else:
+		turn(2)
 	
+def dire_buy_mysticaura():
+	dire.gold -= dire.mysticaura.cost
+	dire.strike.manacost += dire.mysticaura.manacostreduction
+	dire.freeze.manacost += dire.mysticaura.manacostreduction
+	dire.burn.manacost += dire.mysticaura.manacostreduction
+	dire.mysticaura.levelup()
+	dire.strike.manacost -= dire.mysticaura.manacostreduction
+	dire.freeze.manacost -= dire.mysticaura.manacostreduction
+	dire.burn.manacost -= dire.mysticaura.manacostreduction
+	dire_mysticaura_level_label_text.set(dire.mysticaura.level)
+	global dire_turns
+	if dire_turns > 0:
+		dire_turns -= 1
+		turn(2)
+	else:
+		turn(1)
+		
+		
 #layout:
 
 #menu layout:
@@ -754,6 +822,10 @@ radiant_healing_level_label.grid(row=12,column=2)
 radiant_forcestaff_button.grid(row=13,column=1)
 radiant_forcestaff_level_label.grid(row=14,column=1)
 
+radiant_mysticaura_button.grid(row=13,column=2)
+radiant_mysticaura_level_label.grid(row=14,column=2)
+
+
 start_button.grid(row=1,column=3)
 
 dire_label.grid(row=1,column=4)
@@ -787,6 +859,11 @@ dire_healing_level_label.grid(row=12,column=5)
 
 dire_forcestaff_button.grid(row=13,column=4)
 dire_forcestaff_level_label.grid(row=14,column=4)
+
+dire_mysticaura_button.grid(row=13,column=5)
+dire_mysticaura_level_label.grid(row=14,column=5)
+
+
 
 root.mainloop()
 
