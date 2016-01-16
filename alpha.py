@@ -453,6 +453,15 @@ dire_burn_level_label_text=IntVar()
 dire_burn_level_label_text.set(dire.burn.level)
 dire_burn_level_label=Label(root,textvariable=dire_burn_level_label_text)
 
+radiant_consumable_label=Label(root,text="Consumables")
+dire_consumable_label=Label(root,text="Consumables")
+
+radiant_tango_button=Button(root,text="Tango",state="disabled",command=lambda:radiant_buy_tango());
+register(radiant_tango_button,"Consume to Instantly Restore 5HP. Cost = 5")
+dire_tango_button=Button(root,text="Tango",state="disabled",command=lambda:dire_buy_tango());
+register(dire_tango_button,"Consume to Instantly Restore 5HP. Cost = 5")
+
+
 #button functions:
 
 #menu buttons:
@@ -484,6 +493,7 @@ def turn(arg):
 		dire_healing_button.configure(state="disabled")
 		dire_forcestaff_button.configure(state="disabled")
 		dire_mysticaura_button.configure(state="disabled")
+		dire_tango_button.configure(state="disabled")
 		radiant_strike_button.configure(state="normal")
 		radiant_greed_button.configure(state="normal")
 		radiant_freeze_button.configure(state="normal")
@@ -492,6 +502,7 @@ def turn(arg):
 		radiant_healing_button.configure(state="normal")
 		radiant_forcestaff_button.configure(state="normal")
 		radiant_mysticaura_button.configure(state="normal")
+		radiant_tango_button.configure(state="normal")
 		radiant.hp += radiant.hpregen
 		radiant.mana += radiant.manaregen
 	if t%2==1: #dire's turn
@@ -503,6 +514,7 @@ def turn(arg):
 		radiant_healing_button.configure(state="disabled")
 		radiant_forcestaff_button.configure(state="disabled")
 		radiant_mysticaura_button.configure(state="disabled")
+		radiant_tango_button.configure(state="disabled")
 		dire_strike_button.configure(state="normal")
 		dire_greed_button.configure(state="normal")
 		dire_freeze_button.configure(state="normal")
@@ -511,6 +523,7 @@ def turn(arg):
 		dire_healing_button.configure(state="normal")
 		dire_forcestaff_button.configure(state="normal")
 		dire_mysticaura_button.configure(state="normal")
+		dire_tango_button.configure(state="normal")
 		dire.hp += dire.hpregen
 		dire.mana += dire.manaregen
 	if radiant.strike.manacost > radiant.mana: #strike
@@ -545,6 +558,10 @@ def turn(arg):
 		radiant_mysticaura_button.configure(state="disabled")
 	if dire.gold + dire.goldregen < dire.mysticaura.cost:
 		dire_mysticaura_button.configure(state="disabled")
+	if radiant.gold + radiant.goldregen < 5: #tango
+		radiant_tango_button.configure(state="disabled")
+	if dire.gold + dire.goldregen < 5:
+		dire_tango_button.configure(state="disabled")
 	radiant.gold += radiant.goldregen
 	dire.gold += dire.goldregen
 	radiant_hp_value_label_text.set(radiant.hp)
@@ -737,7 +754,7 @@ def radiant_buy_forcestaff():
 		
 def dire_buy_forcestaff():
 	dire.gold -= dire.forcestaff.cost
-	dire.forcestaff.levelup();
+	dire.forcestaff.levelup()
 	dire_forcestaff_level_label_text.set(dire.forcestaff.level)
 	global dire_turns
 	if dire_turns > 0:
@@ -745,6 +762,27 @@ def dire_buy_forcestaff():
 		turn(2)
 	else:
 		turn(1)
+		
+def radiant_buy_tango():
+	radiant.gold -= 3
+	radiant.hp += 5
+	global radiant_turns
+	if radiant_turns > 0:
+		radiant_turns -= 1
+		turn(1)
+	else:
+		turn(2)
+		
+def dire_buy_tango():
+	dire.gold -= 3
+	dire.hp += 5
+	global dire_turns
+	if dire_turns > 0:
+		dire_turns -= 1
+		turn(2)
+	else:
+		turn(1)
+		
 		
 def radiant_buy_mysticaura():
 	radiant.gold -= radiant.mysticaura.cost
@@ -826,6 +864,12 @@ radiant_mysticaura_button.grid(row=13,column=2)
 radiant_mysticaura_level_label.grid(row=14,column=2)
 
 
+radiant_consumable_label.grid(row=15,column=1)
+
+
+radiant_tango_button.grid(row=16,column=1)
+
+
 start_button.grid(row=1,column=3)
 
 dire_label.grid(row=1,column=4)
@@ -863,7 +907,10 @@ dire_forcestaff_level_label.grid(row=14,column=4)
 dire_mysticaura_button.grid(row=13,column=5)
 dire_mysticaura_level_label.grid(row=14,column=5)
 
+dire_consumable_label.grid(row=15,column=4)
 
+
+dire_tango_button.grid(row=16,column=4)
 
 root.mainloop()
 
