@@ -17,16 +17,16 @@ Abilities
 To see the description of an ability in game, simply hover over its corresponding button.
 
 Strike
-  Lowers the opponent's HP
+    Lowers the opponent's HP
   
 Greed
-  Steal the opponent's gold at the cost of your own HP
+    Steal the opponent's gold at the cost of your own HP
   
 Freeze
-  Lowers your opponent's HP and grants you addtional turns
+    Lowers your opponent's HP and grants you addtional turns
   
 Burn
-  Lowers your opponent's HP and Mana
+    Lowers your opponent's HP and Mana
   
 
 Items
